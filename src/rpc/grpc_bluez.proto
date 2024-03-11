@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.bluez";
+option java_outer_classname = "GrpcBluezProto";
+
+package grpc_bluez;
+
+message SimpleReply {
+    bool result = 1;
+}
+
+
+message SimpleConnectRequest {
+    string address = 1;
+    optional string name = 2;
+}
+
+message SimpleDisconnectRequest {
+    optional string address = 1;
+    optional string name = 2;
+}
+
+enum MediaProfile {
+    MEDIA_PROFILE_A2DP = 0;
+    MEDIA_PROFILE_HFP = 1;
+}
+
+message SimplePlayMediaRequest {
+    optional string address = 1;
+    optional string name = 2;
+    bool play = 3;
+    message PlayConfig {
+        MediaProfile profile = 1;
+        string media = 2;
+        int32 timeout = 3;
+    }
+}
+
+message SimpleCommandRequest {
+    optional string address = 1;
+    optional string name = 2;
+    bytes cmd = 3;
+}
+
+service SimpleBluetoothInterface{
+    rpc SimpleConnect(SimpleConnectRequest) returns (SimpleReply) {}
+    rpc SimpleDisconnect(SimpleDisconnectRequest) returns (SimpleReply) {}
+    rpc SimplePlayMedia(SimplePlayMediaRequest) returns (SimpleReply) {}
+    rpc SimpleCommand(SimpleCommandRequest) returns (SimpleReply) {}
+}
+
+// service BluetoothInterface {
+//     rpc Connect(ConnectRequest) returns (ConnectReply) {}
+//     rpc Disconnect(DisconnectRequest) returns (DisconnectReply) {}
+//     rpc Pair(PairRequest) returns (PairReply) {}
+//     rpc Power(PowerRequest) returns (PowerReply) {}
+//     rpc Scan(ScanRequest) returns (ScanReply) {}
+//     rpc Remove(RemoveRequest) returns (RemoveReply) {}
+//     rpc Trust(TrustRequest) returns (TrustReply) {}
+//     rpc Untrust(UntrustRequest) returns (UntrustReply) {}
+// }
