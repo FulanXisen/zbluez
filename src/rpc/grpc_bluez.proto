@@ -10,15 +10,18 @@ message SimpleReply {
     bool result = 1;
 }
 
+message SimplePowerResetRequest {}
 
 message SimpleConnectRequest {
     string address = 1;
-    optional string name = 2;
 }
 
 message SimpleDisconnectRequest {
-    optional string address = 1;
-    optional string name = 2;
+    string address = 1;
+}
+
+message SimpleRemoveRequest {
+    string address = 1;
 }
 
 enum MediaProfile {
@@ -27,8 +30,7 @@ enum MediaProfile {
 }
 
 message SimplePlayMediaRequest {
-    optional string address = 1;
-    optional string name = 2;
+    string address = 1;
     bool play = 3;
     message PlayConfig {
         MediaProfile profile = 1;
@@ -38,12 +40,13 @@ message SimplePlayMediaRequest {
 }
 
 message SimpleCommandRequest {
-    optional string address = 1;
-    optional string name = 2;
-    bytes cmd = 3;
+    string address = 1;
+    bytes cmd = 2;
 }
 
 service SimpleBluetoothInterface{
+    rpc SimpleRemove(SimpleRemoveRequest) returns (SimpleReply) {}
+    rpc SimplePowerReset(SimplePowerResetRequest) returns (SimpleReply) {}
     rpc SimpleConnect(SimpleConnectRequest) returns (SimpleReply) {}
     rpc SimpleDisconnect(SimpleDisconnectRequest) returns (SimpleReply) {}
     rpc SimplePlayMedia(SimplePlayMediaRequest) returns (SimpleReply) {}

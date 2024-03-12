@@ -6,27 +6,30 @@ pub struct SimpleReply {
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SimplePowerResetRequest {}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SimpleConnectRequest {
     #[prost(string, tag = "1")]
     pub address: ::prost::alloc::string::String,
-    #[prost(string, optional, tag = "2")]
-    pub name: ::core::option::Option<::prost::alloc::string::String>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SimpleDisconnectRequest {
-    #[prost(string, optional, tag = "1")]
-    pub address: ::core::option::Option<::prost::alloc::string::String>,
-    #[prost(string, optional, tag = "2")]
-    pub name: ::core::option::Option<::prost::alloc::string::String>,
+    #[prost(string, tag = "1")]
+    pub address: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SimpleRemoveRequest {
+    #[prost(string, tag = "1")]
+    pub address: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SimplePlayMediaRequest {
-    #[prost(string, optional, tag = "1")]
-    pub address: ::core::option::Option<::prost::alloc::string::String>,
-    #[prost(string, optional, tag = "2")]
-    pub name: ::core::option::Option<::prost::alloc::string::String>,
+    #[prost(string, tag = "1")]
+    pub address: ::prost::alloc::string::String,
     #[prost(bool, tag = "3")]
     pub play: bool,
 }
@@ -46,11 +49,9 @@ pub mod simple_play_media_request {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SimpleCommandRequest {
-    #[prost(string, optional, tag = "1")]
-    pub address: ::core::option::Option<::prost::alloc::string::String>,
-    #[prost(string, optional, tag = "2")]
-    pub name: ::core::option::Option<::prost::alloc::string::String>,
-    #[prost(bytes = "vec", tag = "3")]
+    #[prost(string, tag = "1")]
+    pub address: ::prost::alloc::string::String,
+    #[prost(bytes = "vec", tag = "2")]
     pub cmd: ::prost::alloc::vec::Vec<u8>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
@@ -165,6 +166,60 @@ pub mod simple_bluetooth_interface_client {
         pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
             self.inner = self.inner.max_encoding_message_size(limit);
             self
+        }
+        pub async fn simple_remove(
+            &mut self,
+            request: impl tonic::IntoRequest<super::SimpleRemoveRequest>,
+        ) -> std::result::Result<tonic::Response<super::SimpleReply>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/grpc_bluez.SimpleBluetoothInterface/SimpleRemove",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "grpc_bluez.SimpleBluetoothInterface",
+                        "SimpleRemove",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn simple_power_reset(
+            &mut self,
+            request: impl tonic::IntoRequest<super::SimplePowerResetRequest>,
+        ) -> std::result::Result<tonic::Response<super::SimpleReply>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/grpc_bluez.SimpleBluetoothInterface/SimplePowerReset",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "grpc_bluez.SimpleBluetoothInterface",
+                        "SimplePowerReset",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
         }
         pub async fn simple_connect(
             &mut self,
@@ -283,6 +338,14 @@ pub mod simple_bluetooth_interface_server {
     /// Generated trait containing gRPC methods that should be implemented for use with SimpleBluetoothInterfaceServer.
     #[async_trait]
     pub trait SimpleBluetoothInterface: Send + Sync + 'static {
+        async fn simple_remove(
+            &self,
+            request: tonic::Request<super::SimpleRemoveRequest>,
+        ) -> std::result::Result<tonic::Response<super::SimpleReply>, tonic::Status>;
+        async fn simple_power_reset(
+            &self,
+            request: tonic::Request<super::SimplePowerResetRequest>,
+        ) -> std::result::Result<tonic::Response<super::SimpleReply>, tonic::Status>;
         async fn simple_connect(
             &self,
             request: tonic::Request<super::SimpleConnectRequest>,
@@ -380,6 +443,106 @@ pub mod simple_bluetooth_interface_server {
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             let inner = self.inner.clone();
             match req.uri().path() {
+                "/grpc_bluez.SimpleBluetoothInterface/SimpleRemove" => {
+                    #[allow(non_camel_case_types)]
+                    struct SimpleRemoveSvc<T: SimpleBluetoothInterface>(pub Arc<T>);
+                    impl<
+                        T: SimpleBluetoothInterface,
+                    > tonic::server::UnaryService<super::SimpleRemoveRequest>
+                    for SimpleRemoveSvc<T> {
+                        type Response = super::SimpleReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::SimpleRemoveRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as SimpleBluetoothInterface>::simple_remove(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = SimpleRemoveSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/grpc_bluez.SimpleBluetoothInterface/SimplePowerReset" => {
+                    #[allow(non_camel_case_types)]
+                    struct SimplePowerResetSvc<T: SimpleBluetoothInterface>(pub Arc<T>);
+                    impl<
+                        T: SimpleBluetoothInterface,
+                    > tonic::server::UnaryService<super::SimplePowerResetRequest>
+                    for SimplePowerResetSvc<T> {
+                        type Response = super::SimpleReply;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::SimplePowerResetRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as SimpleBluetoothInterface>::simple_power_reset(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = SimplePowerResetSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
                 "/grpc_bluez.SimpleBluetoothInterface/SimpleConnect" => {
                     #[allow(non_camel_case_types)]
                     struct SimpleConnectSvc<T: SimpleBluetoothInterface>(pub Arc<T>);
