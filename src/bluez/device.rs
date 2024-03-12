@@ -31,13 +31,13 @@ trait Device {
     fn connect(&self) -> zbus::Result<()>;
 
     /// ConnectProfile method
-    fn connect_profile(&self, UUID: &str) -> zbus::Result<()>;
+    fn connect_profile(&self, uuid: &str) -> zbus::Result<()>;
 
     /// Disconnect method
     fn disconnect(&self) -> zbus::Result<()>;
 
     /// DisconnectProfile method
-    fn disconnect_profile(&self, UUID: &str) -> zbus::Result<()>;
+    fn disconnect_profile(&self, uuid: &str) -> zbus::Result<()>;
 
     /// Pair method
     fn pair(&self) -> zbus::Result<()>;

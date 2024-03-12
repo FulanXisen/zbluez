@@ -28,7 +28,7 @@ trait ProfileManager {
     fn register_profile(
         &self,
         profile: &zbus::zvariant::ObjectPath<'_>,
-        UUID: &str,
+        uuid: &str,
         options: std::collections::HashMap<&str, zbus::zvariant::Value<'_>>,
     ) -> zbus::Result<()>;
 
